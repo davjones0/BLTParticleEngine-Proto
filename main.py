@@ -14,10 +14,9 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    emitter = Emitter(25, 25, 1, 90, 2.0)
-    emitter.update(0)
+    emitter = Emitter(25, 25, 1, 90, 2.0, 2)
+    emitter.restart()
 
-    print(emitter._particlePool)
     #sudo_pool = [p1, p2]
     timer1 = time.perf_counter()
     while terminal.read() != terminal.TK_CLOSE:
@@ -67,18 +66,18 @@ class Particle(object):
 
 
 class Emitter(object):
-    def __init__(self, x, y, speed, angle, emissionRate):
+    def __init__(self, x, y, speed, angle, emissionRate, totalParticles):
         self._particlePool = []
         self._particleCount = 0
         self._particleIndex = 0
         self._elapsed = 0
         self._emitCounter = 0
 
-        self.totalParticles = 0
-        self.emissionRate = 0
+        self.totalParticles = totalParticles
+        self.emissionRate = emissionRate
 
         self.active = False
-        self.duration = 0
+        self.duration = 1000000
 
         self._pos = {
             "x": x,
@@ -105,7 +104,7 @@ class Emitter(object):
         self._particlePool = []
 
         for _ in range(0, self.totalParticles):
-            self._particlePool.append(Particle())
+            self._particlePool.append(Particle(0, 0, 0, 0, 0, 0))
 
         self._particleCount = 0
         self._particleIndex = 0
@@ -154,18 +153,19 @@ class Emitter(object):
 
             particle.life -= delta
 
-            ++self._particleIndex
+            self._particleIndex += 1
         else:
             temp = self._particlePool[i]
             self._particlePool[i] = self._particlePool[self._particleCount - 1]
             self._particlePool[self._particleCount - 1] = temp
-            --self._particleCount
+            self._particleCount -= 1
 
     def update(self, delta):
-        print(delta)
+        print('delta: ', delta)
         self._elapsed += delta
+        print('elapsed: ', self._elapsed)
         self.active = self._elapsed < self.duration
-
+        print('active: ', self.active)
         if not self.active:
             return
 
