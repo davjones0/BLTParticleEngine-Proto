@@ -14,7 +14,7 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    emitter = Emitter(25, 25, 1, 90, 2.0, 2)
+    emitter = Emitter(25, 25, 1, 90, 2.0, 2, 4)
     emitter.restart()
 
     #sudo_pool = [p1, p2]
@@ -44,19 +44,26 @@ class Particle(object):
             "x": x,
             "y": y
         }
-        self._startingLife = self.life = life
+
+        self.forces = {
+            "x": 0,
+            "y": 0
+        }
+
+        self.life = life
+        self._startingLife = life
 
         self.velocity = {
             "x": speed * math.cos(math.radians(angle)),
             "y": -speed * math.sin(math.radians(angle))
         }
 
-    def update(self, delta):
-        self.life -= delta
-        print(self.life)
-        if self.life > 0:
-            self.position["x"] += self.velocity["x"] * delta
-            self.position["y"] += self.velocity["y"] * delta
+    # def update(self, delta):
+    #     self.life -= delta
+    #     print(self.life)
+    #     if self.life > 0:
+    #         self.position["x"] += self.velocity["x"] * delta
+    #         self.position["y"] += self.velocity["y"] * delta
 
     def setVelocity(self, angle, speed):
         self.velocity = {
@@ -66,7 +73,7 @@ class Particle(object):
 
 
 class Emitter(object):
-    def __init__(self, x, y, speed, angle, emissionRate, totalParticles):
+    def __init__(self, x, y, speed, angle, emissionRate, totalParticles, life):
         self._particlePool = []
         self._particleCount = 0
         self._particleIndex = 0
@@ -94,7 +101,7 @@ class Emitter(object):
         self.angle = angle
         self.angleVar = 0
 
-        self.life = 0
+        self.life = life
         self.lifeVar = 0
 
         self.radius = 0
@@ -104,7 +111,7 @@ class Emitter(object):
         self._particlePool = []
 
         for _ in range(0, self.totalParticles):
-            self._particlePool.append(Particle(0, 0, 0, 0, 0, 0))
+            self._particlePool.append(Particle(self._pos["x"], self._pos["y"], 0, 0, 0, 0))
 
         self._particleCount = 0
         self._particleIndex = 0
@@ -142,19 +149,23 @@ class Emitter(object):
 
         particle.setVelocity(angle, speed)
         particle._startingLife = self.life + self.lifeVar * random.randrange(-1, 1)
+        particle.life = particle._startingLife
+        print("life")
 
     def _updateParticle(self, particle, delta, i):
+        print('Life: ', particle.life)
         if particle.life > 0:
             particle.forces["x"] = 0
             particle.forces["y"] = 0
 
             particle.position["x"] += particle.velocity["x"] * delta
             particle.position["y"] += particle.velocity["y"] * delta
-
+            print("position: ", particle.position)
             particle.life -= delta
 
             self._particleIndex += 1
         else:
+            print("dead particle")
             temp = self._particlePool[i]
             self._particlePool[i] = self._particlePool[self._particleCount - 1]
             self._particlePool[self._particleCount - 1] = temp
@@ -172,7 +183,6 @@ class Emitter(object):
         if self.emissionRate:
             rate = 1.0 / self.emissionRate
             self._emitCounter += delta
-
             while not self._isFull() and self._emitCounter > rate:
                 self._addParticle()
                 self._emitCounter -= rate
