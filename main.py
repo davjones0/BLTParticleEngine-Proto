@@ -14,28 +14,34 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    emitter = Emitter(25, 25, 1, 90, 2.0, 2, 4)
+    emitter = Emitter(25, 25, 20, 90, 4.0, 1, 4)
     emitter.restart()
 
     #sudo_pool = [p1, p2]
     timer1 = time.perf_counter()
-    while terminal.read() != terminal.TK_CLOSE:
+    while not terminal.has_input():
+        #for par in emitter._particlePool:
+        timer2 = time.perf_counter()
+        delta = timer2 - timer1
+
+        emitter.update(delta, 1.0)
         terminal.clear()
-        for par in emitter._particlePool:
-            print(par)
-            render(par)
-            timer2 = time.perf_counter()
-            delta = timer2 - timer1
-            # print(delta)
-            emitter.update(delta)
-        pass
+        for p in emitter._particlePool:
+            render(p, emitter._pos)
+        terminal.refresh()
+        timer1 = time.perf_counter()
+        
+    exit
 
-    terminal.clear()
-
-
-def render(particle):
-    terminal.printf(int(particle.position["x"]), int(particle.position["y"]), 'J')
-    terminal.refresh()
+def render(particle, emitter_pos):
+    print("---------Rendering-----------")
+    # int(particle.position["x"]), int(particle.position["y"])
+    offset = {
+        "x": particle.position["x"] - emitter_pos["x"],
+        "y": particle.position["y"] - emitter_pos["y"]
+    }
+    terminal.printf(int(emitter_pos["x"]), int(emitter_pos["y"]), "[offset={},{}]J".format(int(offset["x"]),int(offset["y"])))
+    #terminal.refresh()
 
 
 class Particle(object):
@@ -54,8 +60,8 @@ class Particle(object):
         self._startingLife = life
 
         self.velocity = {
-            "x": speed * math.cos(math.radians(angle)),
-            "y": -speed * math.sin(math.radians(angle))
+            "x": 0,
+            "y": 0
         }
 
     # def update(self, delta):
@@ -150,14 +156,14 @@ class Emitter(object):
         particle.setVelocity(angle, speed)
         particle._startingLife = self.life + self.lifeVar * random.randrange(-1, 1)
         particle.life = particle._startingLife
-        print("life")
 
     def _updateParticle(self, particle, delta, i):
         print('Life: ', particle.life)
-        if particle.life > 0:
+        if particle.life > 0.0:
             particle.forces["x"] = 0
             particle.forces["y"] = 0
 
+            print("velocity: ", particle.velocity)
             particle.position["x"] += particle.velocity["x"] * delta
             particle.position["y"] += particle.velocity["y"] * delta
             print("position: ", particle.position)
@@ -171,7 +177,9 @@ class Emitter(object):
             self._particlePool[self._particleCount - 1] = temp
             self._particleCount -= 1
 
-    def update(self, delta):
+    def update(self, delta, timeRate):
+        delta *= timeRate
+
         print('delta: ', delta)
         self._elapsed += delta
         print('elapsed: ', self._elapsed)
@@ -192,5 +200,6 @@ class Emitter(object):
         while self._particleIndex < self._particleCount:
             p = self._particlePool[self._particleIndex]
             self._updateParticle(p, delta, self._particleIndex)
+
 
 run()
