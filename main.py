@@ -2,6 +2,8 @@ import random
 import math
 import time
 from bearlibterminal import terminal
+from os import system, name 
+
 
 
 def run():
@@ -14,13 +16,12 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    emitter = Emitter(25, 25, 20, 90, 4.0, 1, 4)
+    emitter = Emitter(25, 25, 40, 90, 0.25, 2, 4)
     emitter.restart()
 
     #sudo_pool = [p1, p2]
     timer1 = time.perf_counter()
     while not terminal.has_input():
-        #for par in emitter._particlePool:
         timer2 = time.perf_counter()
         delta = timer2 - timer1
 
@@ -29,19 +30,21 @@ def run():
         for p in emitter._particlePool:
             render(p, emitter._pos)
         terminal.refresh()
+        system('clear')
         timer1 = time.perf_counter()
         
     exit
 
 def render(particle, emitter_pos):
-    print("---------Rendering-----------")
-    # int(particle.position["x"]), int(particle.position["y"])
-    offset = {
-        "x": particle.position["x"] - emitter_pos["x"],
-        "y": particle.position["y"] - emitter_pos["y"]
-    }
-    terminal.printf(int(emitter_pos["x"]), int(emitter_pos["y"]), "[offset={},{}]J".format(int(offset["x"]),int(offset["y"])))
-    #terminal.refresh()
+    if particle.life > 0.0:
+        print("---------Render-----------")
+        # int(particle.position["x"]), int(particle.position["y"])
+        offset = {
+            "x": particle.position["x"] - emitter_pos["x"],
+            "y": particle.position["y"] - emitter_pos["y"]
+        }
+        terminal.printf(int(emitter_pos["x"]), int(emitter_pos["y"]), "[offset={},{}]J".format(int(offset["x"]),int(offset["y"])))
+        #terminal.refresh()
 
 
 class Particle(object):
@@ -158,6 +161,7 @@ class Emitter(object):
         particle.life = particle._startingLife
 
     def _updateParticle(self, particle, delta, i):
+        print("*****Particle[{}]*****".format(i))
         print('Life: ', particle.life)
         if particle.life > 0.0:
             particle.forces["x"] = 0
@@ -188,9 +192,12 @@ class Emitter(object):
         if not self.active:
             return
 
+        # ideal emissionRate = total particles / average life of particles
         if self.emissionRate:
             rate = 1.0 / self.emissionRate
             self._emitCounter += delta
+            print('emission rate: ', rate)
+            print('emit counter: ', self._emitCounter)
             while not self._isFull() and self._emitCounter > rate:
                 self._addParticle()
                 self._emitCounter -= rate
