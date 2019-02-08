@@ -10,10 +10,13 @@ Todo List:
 - [x] Particle Velocity
 - [ ] Radial Acceleration
 - [ ] Tangential Acceleration
+- [ ] Friction
 - [ ] Color Particles
 - [ ] Color/Opacity Change Based On Life Span
 - [ ] Emit-Particle Class (extends Particle class with logic for spawning particles)
     (still respects parent Emitter's spawn limits)
 - [ ] Figure out how Emitters will Define, Configure, and Update Emit-Particles
 - [ ] Figure out way to inject emitters with additional logic for more complex particle effects
-- [ ] Config Alias For Continous and One Off Effects 
+- [ ] Config Alias for Continous and One Off Effects
+- [ ] Support for Z axis
+- [ ] Port to Rust for Production
