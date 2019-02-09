@@ -5,7 +5,7 @@ Todo List:
 - [x] Basic Particle Class
 - [x] Basic Emitter Class
 - [x] Render Loop
-- [ ] Configurable Delay for Starting System
+- [x] Configurable Delay for Starting System
 - [ ] Abstract System Configuration to txt File
 - [x] Particle Velocity
 - [ ] Radial Acceleration

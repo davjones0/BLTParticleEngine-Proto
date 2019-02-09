@@ -20,6 +20,7 @@ def run():
     emitter.restart()
 
     #sudo_pool = [p1, p2]
+    emitter.start(0)
     timer1 = time.perf_counter()
     while not terminal.has_input():
         timer2 = time.perf_counter()
@@ -207,6 +208,10 @@ class Emitter(object):
         while self._particleIndex < self._particleCount:
             p = self._particlePool[self._particleIndex]
             self._updateParticle(p, delta, self._particleIndex)
+
+    def start(self, delay):
+        time.sleep(delay)
+        self._addParticle()
 
 
 run()
