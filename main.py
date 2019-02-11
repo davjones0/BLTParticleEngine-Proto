@@ -16,22 +16,26 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    emitter = Emitter(25, 25, 40, 90, 0.25, 2, 4)
+    emitter = Emitter(25, 25, 40, 90, .05, 2, 4)
+    emitter.setColor([255, 138, 138, 255], [0, 0, 0, 0], [55, 138, 1, 255], [ 0, 0, 0, 0])
     emitter.restart()
 
     #sudo_pool = [p1, p2]
     emitter.start(0)
     timer1 = time.perf_counter()
+    
     while not terminal.has_input():
         timer2 = time.perf_counter()
         delta = timer2 - timer1
 
         emitter.update(delta, 1.0)
         terminal.clear()
+
         for p in emitter._particlePool:
             render(p, emitter._pos)
         terminal.refresh()
         system('clear')
+
         timer1 = time.perf_counter()
         
     exit
@@ -44,7 +48,7 @@ def render(particle, emitter_pos):
             "x": particle.position["x"] - emitter_pos["x"],
             "y": particle.position["y"] - emitter_pos["y"]
         }
-        terminal.printf(int(emitter_pos["x"]), int(emitter_pos["y"]), "[offset={},{}]J".format(int(offset["x"]),int(offset["y"])))
+        terminal.printf(int(emitter_pos["x"]), int(emitter_pos["y"]), "[offset={},{}][color={}]J[/color]".format(int(offset["x"]), int(offset["y"]), terminal.color_from_argb(int(particle.color[0]), int(particle.color[1]), int(particle.color[2]), int(particle.color[3]))))
         #terminal.refresh()
 
 
@@ -67,6 +71,9 @@ class Particle(object):
             "x": 0,
             "y": 0
         }
+
+        self.color = []
+        self.deltaColor = []
 
     # def update(self, delta):
     #     self.life -= delta
@@ -116,6 +123,19 @@ class Emitter(object):
 
         self.radius = 0
         self.radiusVar = 0
+        
+        #format arbg base 255
+        self.startColor = [0, 0, 0, 0]
+        self.startColorVar = [0, 0, 0, 0]
+
+        self.endColor = [0, 0, 0, 0]
+        self.endColorVar = [0, 0, 0, 0]
+
+    def setColor(self, start, startVar, end, endVar):
+        self.startColor = start
+        self.startColorVar = startVar
+        self.endColor = end
+        self.endColorVar = endVar
 
     def restart(self):
         self._particlePool = []
@@ -161,9 +181,37 @@ class Emitter(object):
         particle._startingLife = self.life + self.lifeVar * random.randrange(-1, 1)
         particle.life = particle._startingLife
 
+        # color
+        # note that colors are stored as arrays => [r,g,b,a]
+        if self.startColor:
+            startColor = [
+                self.startColor[0] + self.startColorVar[0] * random.randrange(-1,1),
+                self.startColor[1] + self.startColorVar[1] * random.randrange(-1,1),
+                self.startColor[2] + self.startColorVar[2] * random.randrange(-1,1),
+                self.startColor[3] + self.startColorVar[3] * random.randrange(-1,1),
+            ]
+            
+            # if no endcolor stay as startcolor
+            endColor = startColor
+            if self.endColor:
+                endColor = [
+                    self.endColor[0] + self.endColorVar[0] * random.randrange(-1,1),
+                    self.endColor[1] + self.endColorVar[1] * random.randrange(-1,1),
+                    self.endColor[2] + self.endColorVar[2] * random.randrange(-1,1),
+                    self.endColor[3] + self.endColorVar[3] * random.randrange(-1,1),
+                ]
+                particle.color = startColor
+                particle.deltaColor = [
+                    (endColor[0] - startColor[0]) / particle.life,
+                    (endColor[1] - startColor[1]) / particle.life,
+                    (endColor[2] - startColor[2]) / particle.life,
+                    (endColor[3] - startColor[3]) / particle.life
+                ]
+
     def _updateParticle(self, particle, delta, i):
         print("*****Particle[{}]*****".format(i))
         print('Life: ', particle.life)
+        print('color: ', particle.color)
         if particle.life > 0.0:
             particle.forces["x"] = 0
             particle.forces["y"] = 0
@@ -173,6 +221,12 @@ class Emitter(object):
             particle.position["y"] += particle.velocity["y"] * delta
             print("position: ", particle.position)
             particle.life -= delta
+
+            if particle.color:
+                particle.color[0] += particle.deltaColor[0] * delta
+                particle.color[1] += particle.deltaColor[1] * delta
+                particle.color[2] += particle.deltaColor[2] * delta
+                particle.color[3] += particle.deltaColor[3] * delta
 
             self._particleIndex += 1
         else:
@@ -185,11 +239,9 @@ class Emitter(object):
     def update(self, delta, timeRate):
         delta *= timeRate
 
-        print('delta: ', delta)
         self._elapsed += delta
-        print('elapsed: ', self._elapsed)
+        # print('elapsed: ', self._elapsed)
         self.active = self._elapsed < self.duration
-        print('active: ', self.active)
         if not self.active:
             return
 

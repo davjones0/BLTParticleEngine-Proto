@@ -11,8 +11,8 @@ Todo List:
 - [ ] Radial Acceleration
 - [ ] Tangential Acceleration
 - [ ] Friction
-- [ ] Color Particles
-- [ ] Color/Opacity Change Based On Life Span
+- [x] Color Particles
+- [x] Color/Opacity Change Based On Life Span
 - [ ] Emit-Particle Class (extends Particle class with logic for spawning particles)
     (still respects parent Emitter's spawn limits)
 - [ ] Figure out how Emitters will Define, Configure, and Update Emit-Particles
