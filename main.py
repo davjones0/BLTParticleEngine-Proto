@@ -1,12 +1,55 @@
 import random
 import math
 import time
+import toml
 from bearlibterminal import terminal
 from os import system, name 
 
 
+def read_config():
+    f = toml.load('particleEffects.toml')
+    # {'TestEffect': {
+    #     'total_particles': 2, 
+    #     'emissionRate': 0.05, 
+    #     'life': 4, 
+    #     'ASCII': 'J', 
+    #     'Movement': {
+    #         'speed': 40,
+    #         'angle': 90, 
+    #         'xEmitterPos': 25, 
+    #         'yEmitterPos': 25, 
+    #         'zEmitterPos': 0
+    #     }, 
+    #     'Deviate': {
+    #         'Movement': {
+    #             'speed': 0, 
+    #             'angle': 0
+    #         }, 
+    #         'Life': {
+    #             'life': 0
+    #         }, 
+    #         'Color': {
+    #             'startRGBA': [0, 0, 0, 0], 
+    #             'endRGBA': [0, 0, 0, 0]
+    #         }, 
+    #         'Position': {
+    #             'x': 0, 
+    #             'y': 0, 
+    #             'z': 0
+    #         }
+    #     }, 
+    #     'Color': {
+    #         'startRGBA': [255, 138, 138, 255], 
+    #         'endRGBA': [255, 138, 1, 55]
+    #     }
+    # }}
+    print(f['TestEffect']['Movement']['xEmitterPos'])
+    emitter = Emitter(f['TestEffect']['Movement']['xEmitterPos'], f['TestEffect']['Movement']['yEmitterPos'], f['TestEffect']['Movement']['Speed'])
+
 
 def run():
+    read_config()
+    
     terminal.open()
     terminal.set("window: size=100x50, cellsize8x12, resizeable=true;")
     terminal.setf("font: Andux_cp866ish.png, size=8x12, codepage=437")
@@ -24,7 +67,7 @@ def run():
     emitter.start(0)
     timer1 = time.perf_counter()
     
-    while not terminal.has_input():
+    while terminal.has_input():
         timer2 = time.perf_counter()
         delta = timer2 - timer1
 
@@ -265,5 +308,5 @@ class Emitter(object):
         time.sleep(delay)
         self._addParticle()
 
-
-run()
+read_config()
+#run()
