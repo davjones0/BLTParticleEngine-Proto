@@ -1,9 +1,57 @@
 import random
 import math
 import time
+import toml
 from bearlibterminal import terminal
 from os import system, name 
 
+
+
+def read_config():
+    f = toml.load('particleEffects.toml')
+    # {'TestEffect': {
+    #     'total_particles': 2, 
+    #     'emissionRate': 0.05, 
+    #     'life': 4, 
+    #     'ASCII': 'J', 
+    #     'Movement': {
+    #         'speed': 40,
+    #         'angle': 90, 
+    #         'xEmitterPos': 25, 
+    #         'yEmitterPos': 25, 
+    #         'zEmitterPos': 0
+    #     }, 
+    #     'Deviate': {
+    #         'Movement': {
+    #             'speed': 0, 
+    #             'angle': 0
+    #         }, 
+    #         'Life': {
+    #             'life': 0
+    #         }, 
+    #         'Color': {
+    #             'startRGBA': [0, 0, 0, 0], 
+    #             'endRGBA': [0, 0, 0, 0]
+    #         }, 
+    #         'Position': {
+    #             'x': 0, 
+    #             'y': 0, 
+    #             'z': 0
+    #         }
+    #     }, 
+    #     'Color': {
+    #         'startRGBA': [255, 138, 138, 255], 
+    #         'endRGBA': [255, 138, 1, 55]
+    #     }
+    # }}
+    emitter = Emitter(f['TestEffect']['Movement']['xEmitterPos'], 
+    f['TestEffect']['Movement']['yEmitterPos'], 
+    f['TestEffect']['Movement']['speed'],
+    f['TestEffect']['Movement']['angle'],
+    f['TestEffect']['emissionRate'],
+    f['TestEffect']['total_particles'],
+    f['TestEffect']['life'])
+    return emitter
 
 
 def run():
@@ -16,7 +64,8 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    emitter = Emitter(25, 25, 40, 90, .05, 2, 4)
+    #emitter = Emitter(25, 25, 40, 90, .05, 2, 4)
+    emitter = read_config()
     emitter.setColor([255, 138, 138, 255], [0, 0, 0, 0], [55, 138, 1, 255], [ 0, 0, 0, 0])
     emitter.restart()
 
