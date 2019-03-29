@@ -43,20 +43,12 @@ def read_config():
     #         'endRGBA': [255, 138, 1, 55]
     #     }
     # }}
-    emitter = Emitter(
-        f['TestEffect']['Movement']['xEmitterPos'], 
-        f['TestEffect']['Movement']['yEmitterPos'], 
-        f['TestEffect']['Movement']['speed'],
-        f['TestEffect']['Movement']['angle'],
-        f['TestEffect']['emissionRate'],
-        f['TestEffect']['total_particles'],
-        f['TestEffect']['life'])
-
-    return emitter
+    print(f['TestEffect']['Movement']['xEmitterPos'])
+    emitter = Emitter(f['TestEffect']['Movement']['xEmitterPos'], f['TestEffect']['Movement']['yEmitterPos'], f['TestEffect']['Movement']['Speed'])
 
 
 def run():
-    emitter = read_config()
+    read_config()
     
     terminal.open()
     terminal.set("window: size=100x50, cellsize8x12, resizeable=true;")
@@ -67,7 +59,7 @@ def run():
 
     #p1 = Particle(50, 25, 0, 10, 90, 1)
     #p2 = Particle(50, 25, 0, 10, 70, 1)
-    # cut over to config emitter = Emitter(25, 25, 40, 90, .05, 2, 4)
+    emitter = Emitter(25, 25, 40, 90, .05, 2, 4)
     emitter.setColor([255, 138, 138, 255], [0, 0, 0, 0], [55, 138, 1, 255], [ 0, 0, 0, 0])
     emitter.restart()
 
@@ -316,4 +308,5 @@ class Emitter(object):
         time.sleep(delay)
         self._addParticle()
 
-run()
+read_config()
+#run()
