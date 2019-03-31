@@ -1,21 +1,28 @@
 
 [TestEffect]
-total_particles = 2
-emissionRate = 0.05
-life = 4
-ASCII = 'J'
+total_particles = 5000
+emissionRate = 8200
+life = 0.04
+ASCII = '[U+00B7]'
 
     [TestEffect.Movement]
-    speed = 40
+    speed = 5000
     angle = 90
     xEmitterPos = 25
     yEmitterPos = 25
     zEmitterPos = 0
+    radialAccel = -10000000
+    tangentialAccel = 1000000
+        [TestEffect.Movement.Gravity]
+        x = 0
+        y = 0
 
     [TestEffect.Deviate]
         [TestEffect.Deviate.Movement]
         speed = 0
-        angle = 0
+        angle = 180
+        radialAccel = 0
+        tangentialAccel = 0
 
         [TestEffect.Deviate.Life]
         life = 0
@@ -25,7 +32,7 @@ ASCII = 'J'
         endRGBA = [0, 0, 0, 0]
 
         [TestEffect.Deviate.Position]
-        x = 0
+        x = 1
         y = 0
         z = 0
 

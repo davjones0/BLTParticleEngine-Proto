@@ -6,11 +6,11 @@ Todo List:
 - [x] Basic Emitter Class
 - [x] Render Loop
 - [x] Configurable Delay for Starting System
-- [ ] Abstract System Configuration to txt File
+- [x] Abstract System Configuration to txt File
 - [x] Particle Velocity
-- [ ] Radial Acceleration
-- [ ] Tangential Acceleration
-- [ ] Friction
+- [x] Radial Acceleration
+- [x] Tangential Acceleration
+- [x] Gravity
 - [x] Color Particles
 - [x] Color/Opacity Change Based On Life Span
 - [ ] Emit-Particle Class (extends Particle class with logic for spawning particles)
@@ -19,4 +19,5 @@ Todo List:
 - [ ] Figure out way to inject emitters with additional logic for more complex particle effects
 - [ ] Config Alias for Continous and One Off Effects
 - [ ] Support for Z axis
+- [ ] Refactor OOP to data oriented design and compare performance
 - [ ] Port to Rust for Production
